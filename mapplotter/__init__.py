@@ -23,7 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Module docstring"""
+"""This module contains a simple plotter, which can receive data from map.geo.admin.ch, and plot the heights."""
 
 __author__ = 'Matthias Busenhart'
 __copyright__ = 'Copyright 2019, Matthias Busenhart'
@@ -44,9 +44,6 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as mtri
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import gridspec, cm
-
-# TODO: plot styles: title (from filename?), margins
-# TODO: git repo
 
 class DataPoint:
     """simple Storage object for Datapoints"""
