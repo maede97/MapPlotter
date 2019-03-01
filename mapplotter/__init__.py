@@ -237,11 +237,12 @@ class Plotter:
 
         ax2 = fig.add_subplot(gs[1,1:10])
         Z_ = np.array(Z)
-        Z_ = np.flipud(Z_.reshape(-1, self.y_am)) # my points start at bottom
-        Z_ = np.fliplr(Z_)
+        Z_ = Z_.reshape(-1, self.y_am) # my points start at bottom
+        Z_ = np.transpose(Z_)
+        #Z_ = np.fliplr(Z_)
         ax2.set_aspect("equal")
-        ax2.set_xlim(min(X), max(X))
-        ax2.set_ylim(min(Y), max(Y))
+        # ax2.set_xlim(min(X), max(X))
+        # ax2.set_ylim(min(Y), max(Y))
         p = ax2.contourf(Z_, cmap = cm.coolwarm, extent=[min(X), max(X), min(Y), max(Y)])
 
         ax3 = fig.add_subplot(gs[1,10:])
