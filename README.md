@@ -9,6 +9,4 @@ Let's you create 3D views from switzerland
 `pip install -r mapplotter/requirements.txt`
 
 ## Usage Example
-`
-python3 ex.py
-`
+`python3 ex1.py` or `python3 ex2.py`
