@@ -6,7 +6,7 @@ Let's you create 3D views from switzerland
 
 `cd MapPlotter`
 
-`pip install -r mapplotter/requirements.txt`
+`pip3 install -r mapplotter/requirements.txt`
 
 ## Usage Example
 `python3 ex1.py` or `python3 ex2.py`
