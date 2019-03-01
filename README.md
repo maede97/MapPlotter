@@ -6,6 +6,8 @@ Let's you create 3D views from switzerland
 
 `cd MapPlotter`
 
+`sudo apt install scrot`
+
 `pip3 install -r mapplotter/requirements.txt`
 
 ## Usage Example
