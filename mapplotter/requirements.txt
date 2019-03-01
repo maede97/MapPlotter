@@ -3,3 +3,4 @@ numpy==1.15.4
 Pillow==5.4.1
 PyAutoGUI==0.9.41
 pyperclip==1.7.0
+python-xlib==0.25
