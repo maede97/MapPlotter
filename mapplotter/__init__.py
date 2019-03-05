@@ -256,7 +256,7 @@ class Plotter:
 
         plt.draw() # redraw plot
 
-    def plot(self):
+    def plot(self, overlay=False):
         """show a simple plot: 3D on top, contourf bottom left and image bottom right"""
         X = self.getX()
         Y = self.getY()
@@ -289,7 +289,8 @@ class Plotter:
         self.ax3.yaxis.tick_right()
         self.ax3.yaxis.set_label_position("right")
         self.ax3.imshow(self.image,extent=[min(X), max(X), min(Y), max(Y)])
-
+        if(overlay):
+            self.ax3.contourf(Z_,cmap=cm.coolwarm,extent=[min(X), max(X), min(Y), max(Y)],alpha=0.5)
         ax4 = fig.add_subplot(gs[1,0])
         ax4.yaxis.tick_left()
         ax4.yaxis.set_label_position("left")
