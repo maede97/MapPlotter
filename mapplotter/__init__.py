@@ -45,6 +45,35 @@ import matplotlib.tri as mtri
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import gridspec, cm
 
+
+def set_axes_equal(ax):
+    '''Make axes of 3D plot have equal scale so that spheres appear as spheres,
+    cubes as cubes, etc..  This is one possible solution to Matplotlib's
+    ax.set_aspect('equal') and ax.axis('equal') not working for 3D.
+
+    Input
+      ax: a matplotlib axis, e.g., as output from plt.gca().
+    '''
+
+    x_limits = ax.get_xlim3d()
+    y_limits = ax.get_ylim3d()
+    z_limits = ax.get_zlim3d()
+
+    x_range = abs(x_limits[1] - x_limits[0])
+    x_middle = np.mean(x_limits)
+    y_range = abs(y_limits[1] - y_limits[0])
+    y_middle = np.mean(y_limits)
+    z_range = abs(z_limits[1] - z_limits[0])
+    z_middle = np.mean(z_limits)
+
+    # The plot bounding box is a sphere in the sense of the infinity
+    # norm, hence I call half the max range the plot radius.
+    plot_radius = 0.5*max([x_range, y_range, z_range])
+
+    ax.set_xlim3d([x_middle - plot_radius, x_middle + plot_radius])
+    ax.set_ylim3d([y_middle - plot_radius, y_middle + plot_radius])
+    ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])
+
 class DataPoint:
     """simple Storage object for Datapoints"""
     def __init__(self, x, y, z):
@@ -136,7 +165,7 @@ class Plotter:
             x,y = p[0],p[1]
             try:
                 self.getData(x,y)
-            except pya.FailSafeException as e:
+            except pya.FailSafeException:
                 print("FailSafe triggered")
                 return
         pya.hotkey('ctrl', 'w') # close tab
@@ -215,6 +244,18 @@ class Plotter:
             self.datapoints.append(DataPoint(x,y,z))
         self.image = PIL.Image.open(filename+".png")
 
+    def handlePlotClick(self, event):
+        if(event.button != 1): # only left click
+            return
+        if(isinstance(event.inaxes,Axes3D)): # only on bottom two plots
+            return
+        # we need to add a dot here
+        # can't add dot in 3D, because of wrong layering at 3d rendering
+        self.ax2.scatter(event.xdata, event.ydata, s=50,c="red")
+        self.ax3.scatter(event.xdata, event.ydata, s=50,c="red")
+
+        plt.draw() # redraw plot
+
     def plot(self):
         """show a simple plot: 3D on top, contourf bottom left and image bottom right"""
         X = self.getX()
@@ -225,45 +266,36 @@ class Plotter:
 
         fig.suptitle("MapPlotter")
 
-        gs = gridspec.GridSpec(2,19)
+        gs = gridspec.GridSpec(2,20)
 
-        ax1 = fig.add_subplot(gs[0,:], projection='3d')
+        self.ax1 = fig.add_subplot(gs[0,:], projection='3d')
         triang = mtri.Triangulation(X, Y)
-        ax1.plot_trisurf(triang, Z)
+        self.ax1.plot_trisurf(triang, Z)
 
-        ax1.set_xlabel("Ost-West")
-        ax1.set_ylabel("Nord-Süd")
-        ax1.set_zlabel("Höhe ü. M.")
+        self.ax1.set_xlabel("Ost-West")
+        self.ax1.set_ylabel("Nord-Süd")
+        self.ax1.set_zlabel("Höhe ü. M.")
 
-        ax2 = fig.add_subplot(gs[1,1:10])
+        self.ax2 = fig.add_subplot(gs[1,2:11])
         Z_ = np.array(Z)
         Z_ = Z_.reshape(-1, self.y_am) # my points start at bottom
         Z_ = np.transpose(Z_)
-        #Z_ = np.fliplr(Z_)
-        ax2.set_aspect("equal")
-        # ax2.set_xlim(min(X), max(X))
-        # ax2.set_ylim(min(Y), max(Y))
-        p = ax2.contourf(Z_, cmap = cm.coolwarm, extent=[min(X), max(X), min(Y), max(Y)])
 
-        ax3 = fig.add_subplot(gs[1,10:])
-        ax3.imshow(self.image,extent=[min(X), max(X), min(Y), max(Y)])
+        self.ax2.set_aspect("equal")
+        
+        p = self.ax2.contourf(Z_, cmap = cm.coolwarm, extent=[min(X), max(X), min(Y), max(Y)])
+
+        self.ax3 = fig.add_subplot(gs[1,11:])
+        self.ax3.yaxis.tick_right()
+        self.ax3.yaxis.set_label_position("right")
+        self.ax3.imshow(self.image,extent=[min(X), max(X), min(Y), max(Y)])
 
         ax4 = fig.add_subplot(gs[1,0])
+        ax4.yaxis.tick_left()
+        ax4.yaxis.set_label_position("left")
         plt.colorbar(p, cax=ax4, shrink=0.1)
 
+        fig.canvas.mpl_connect('button_press_event',self.handlePlotClick)
+        mng = plt.get_current_fig_manager()
+        mng.resize(*mng.window.maxsize())
         plt.show()
-
-if __name__ == '__main__':
-    p = Plotter()
-    # p.setCoordsFromString("642'236.12, 158'607.77")
-    # p.setZoomLevel(8)
-
-    # p.setPoints(20,10)
-
-    # p.getAllPoints()
-
-    p.loadFromFile("examples/eigernord")
-
-    # p.saveDataToFile()
-
-    p.plot()
