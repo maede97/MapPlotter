@@ -11,4 +11,4 @@ if __name__ == '__main__':
 
     p.loadFromFile("mapplotter/examples/eigernord")
 
-    p.plot()
+    p.plot(overlay=True)
