@@ -1,6 +1,8 @@
 # MapPlotter
 Let's you create 3D views from switzerland
 
+![Example (see ex1.py)](example.png)
+
 ## Installation
 `git clone https://github.com/maede97/MapPlotter`
 
