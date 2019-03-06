@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
     gr.StartGIF("output.gif");
     
     mglData tt(count_trias, 3, trias);
-    mglData uu(count_trias, xp);
+    mglData uu(count_trias, xp); // or m*n, xp
     mglData vv(count_trias, yp);
     mglData ww(count_trias, zp);
 
@@ -98,6 +98,7 @@ int main(int argc, char const *argv[])
     delete[] yp;
     delete[] zp;
     delete[] coords;
+    delete[] trias;
 
     return 0;
 }
