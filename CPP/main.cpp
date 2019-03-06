@@ -68,11 +68,11 @@ int main(int argc, char const *argv[])
     gr.SetSize(1000,1000);
 
     gr.StartGIF("output.gif");
-    
-    mglData tt(count_trias, 3, trias);
-    mglData uu(count_trias, xp); // or m*n, xp
-    mglData vv(count_trias, yp);
-    mglData ww(count_trias, zp);
+
+    mglData tt(count_trias/3, 3, trias);
+    mglData uu(m*n, xp);
+    mglData vv(m*n, yp);
+    mglData ww(m*n, zp);
 
     std::cout << minx << " " << maxx << "/" << miny << " " << maxy << "/" << minz << " " << maxz << std::endl;
 
