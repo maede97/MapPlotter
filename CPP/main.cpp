@@ -6,6 +6,13 @@
 #include <iomanip>
 
 
+void print(double* p, int n) {
+    for(int i = 0; i < n; i++) {
+        std::cout << p[i] << std::endl;
+    }
+}
+
+
 int main(int argc, char const *argv[])
 {
     // filename is first argument
@@ -49,10 +56,19 @@ int main(int argc, char const *argv[])
         zp[i] = z;
     }
     std::cout << "Read " << n*m << " lines successfully." << std::endl;
+    /*
+    std::cout << "XP" << std::endl;
+    print(xp, m*n);
+    std::cout << "YP" << std::endl;
+    print(yp, m*n);
+    std::cout << "ZP" << std::endl;
+    print(zp, m*n);
+    std::cout << "Coords" << std::endl;
+    print(coords, 2*m*n);*/
 
     // do delauny here
     //delaunator::Delaunator d(xy_coords);
-    delaunator::Delaunator d(std::vector<double>(coords, coords+n*m));
+    delaunator::Delaunator d(std::vector<double>(coords, coords+2*n*m));
 
     int count_trias = d.triangles.size();
 
@@ -62,18 +78,21 @@ int main(int argc, char const *argv[])
         trias[i] = d.triangles[i];
     }
 
+    
+
+
     // plot data
     mglGraph gr;
 
     gr.SetSize(1000,1000);
 
     gr.StartGIF("output.gif");
-
     mglData tt(count_trias/3, 3, trias);
     mglData uu(m*n, xp);
     mglData vv(m*n, yp);
     mglData ww(m*n, zp);
 
+    std::cout << "Coordinates using for axis:" << std::endl;
     std::cout << minx << " " << maxx << "/" << miny << " " << maxy << "/" << minz << " " << maxz << std::endl;
 
     for(double i = 0; i<360.0; i+=360.0 / FRAME_COUNT) {
@@ -88,8 +107,9 @@ int main(int argc, char const *argv[])
         gr.Axis();
         gr.TriPlot(tt,uu,vv,ww,"b");
         gr.TriPlot(tt,uu,vv,ww,"k#");
+        //gr.TriCont(tt,uu,vv,ww,"B");
         gr.EndFrame();
-        std::cout << "i: " << i << std::endl;
+        std::cout << "Current angle: " << i << std::endl;
     }
 
     gr.CloseGIF();
