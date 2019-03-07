@@ -2,16 +2,12 @@
 #include <fstream>
 #include <vector>
 #include <mgl2/mgl.h>
-#include "delaunator.hpp"
-#include <iomanip>
-
 
 void print(double* p, int n) {
     for(int i = 0; i < n; i++) {
         std::cout << p[i] << std::endl;
     }
 }
-
 
 int main(int argc, char const *argv[])
 {
@@ -57,6 +53,7 @@ int main(int argc, char const *argv[])
     }
     std::cout << "Read " << n*m << " lines successfully." << std::endl;
     /*
+    // DEBUGGING CODE HERE
     std::cout << "XP" << std::endl;
     print(xp, m*n);
     std::cout << "YP" << std::endl;
@@ -64,22 +61,8 @@ int main(int argc, char const *argv[])
     std::cout << "ZP" << std::endl;
     print(zp, m*n);
     std::cout << "Coords" << std::endl;
-    print(coords, 2*m*n);*/
-
-    // do delauny here
-    //delaunator::Delaunator d(xy_coords);
-    delaunator::Delaunator d(std::vector<double>(coords, coords+2*n*m));
-
-    int count_trias = d.triangles.size();
-
-    double* trias = new double[count_trias];
-
-    for(int i = 0; i < count_trias; i++) {
-        trias[i] = d.triangles[i];
-    }
-
-    
-
+    print(coords, 2*m*n);
+    */
 
     // plot data
     mglGraph gr;
@@ -87,28 +70,30 @@ int main(int argc, char const *argv[])
     gr.SetSize(1000,1000);
 
     gr.StartGIF("output.gif");
-    mglData tt(count_trias/3, 3, trias);
+
     mglData uu(m*n, xp);
     mglData vv(m*n, yp);
     mglData ww(m*n, zp);
+
+    mglData tr = mglTriangulation(uu,vv);
 
     std::cout << "Coordinates using for axis:" << std::endl;
     std::cout << minx << " " << maxx << "/" << miny << " " << maxy << "/" << minz << " " << maxz << std::endl;
 
     for(double i = 0; i<360.0; i+=360.0 / FRAME_COUNT) {
         gr.NewFrame();
-        /*gr.SetRanges(*std::min_element(xp, xp+n*m), *std::max_element(xp, xp+n*m),
-            *std::min_element(yp, yp+n*m), *std::max_element(yp, yp+n*m),
-            *std::min_element(zp, zp+n*m), *std::max_element(zp, zp+n*m));*/
+
         gr.SetRanges(minx, maxx, miny, maxy, minz, maxz);
         //rotate around:  X Z Y
         gr.Rotate(45, i, 0);
         gr.Aspect(1,1,1); // set axis equal aspect
         gr.Axis();
-        gr.TriPlot(tt,uu,vv,ww,"b");
-        gr.TriPlot(tt,uu,vv,ww,"k#");
-        //gr.TriCont(tt,uu,vv,ww,"B");
+        gr.TriPlot(tr,uu,vv,ww,"b");
+        gr.TriPlot(tr,uu,vv,ww,"k#");
+        //gr.TriCont(tr,uu,vv,ww,"B"); // contour lines
+
         gr.EndFrame();
+
         std::cout << "Current angle: " << i << std::endl;
     }
 
@@ -118,7 +103,6 @@ int main(int argc, char const *argv[])
     delete[] yp;
     delete[] zp;
     delete[] coords;
-    delete[] trias;
 
     return 0;
 }
