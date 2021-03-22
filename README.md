@@ -1,5 +1,5 @@
 # MapPlotter
-Let's you create 3D views from switzerland. View them with a simple 3D-view or just glance at your contour plot. Easy customizable, and, of course, free to use.
+Lets you create 3D views of Switzerland. View them with a simple 3D-view or just glance at your contour plot. Easily customizable and, of course, free to use.
 
 ![Example (see ex1.py)](example.png)
 
